@@ -1,6 +1,14 @@
 package lk.ijse.gdse68.studentmanagement.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 
 public class StudentDTO implements Serializable {
     private String id;
