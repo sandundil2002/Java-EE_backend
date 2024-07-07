@@ -1,7 +1,5 @@
 package lk.ijse.gdse68.studentmanagement.controller;
 
-import jakarta.json.Json;
-import jakarta.json.JsonReader;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.servlet.annotation.WebServlet;
