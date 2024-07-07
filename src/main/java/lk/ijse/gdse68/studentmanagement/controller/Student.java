@@ -1,5 +1,8 @@
 package lk.ijse.gdse68.studentmanagement.controller;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,10 +21,11 @@ public class Student extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
 
-        BufferedReader reader = req.getReader();
-        StringBuilder sb = new StringBuilder();
-        reader.lines().forEach(s -> sb.append(s).append("\n"));
-        System.out.println(sb);
+        //process the JSON
+        JsonReader reader = Json.createReader(req.getReader());
+        JsonObject jsonObject = reader.readObject();
+        String name = jsonObject.getString("name");
+        System.out.println(name);
     }
 
     @Override
