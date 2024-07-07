@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @WebServlet(urlPatterns = "/student")
 public class Student extends HttpServlet {
@@ -26,6 +27,10 @@ public class Student extends HttpServlet {
         JsonObject jsonObject = reader.readObject();
         String name = jsonObject.getString("name");
         System.out.println(name);
+
+        //send data to the client
+        var writer = resp.getWriter();
+        writer.write("Student saved successfully");
     }
 
     @Override
