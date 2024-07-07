@@ -1,6 +1,7 @@
 package lk.ijse.gdse68.studentmanagement.controller;
 
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import jakarta.servlet.annotation.WebServlet;
@@ -8,9 +9,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 @WebServlet(urlPatterns = "/student")
 public class Student extends HttpServlet {
@@ -31,6 +30,14 @@ public class Student extends HttpServlet {
         //send data to the client
         var writer = resp.getWriter();
         writer.write("Student saved successfully");
+
+        //optional - JSON array processing
+        JsonArray jsonArray = reader.readArray();
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JsonObject object = jsonArray.getJsonObject(i);
+            System.out.println(object.getString("name"));
+            System.out.println(object.getString("email"));
+        }
     }
 
     @Override
