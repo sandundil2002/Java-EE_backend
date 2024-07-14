@@ -2,6 +2,8 @@ package lk.ijse.gdse68.studentmanagement.controller;
 
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,9 +12,26 @@ import lk.ijse.gdse68.studentmanagement.dto.StudentDTO;
 import lk.ijse.gdse68.studentmanagement.util.Util;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 @WebServlet(urlPatterns = "/student")
 public class Student extends HttpServlet {
+    Connection connection;
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        try {
+            var dbClass = getServletContext().getInitParameter("db-class");
+            var dbUrl = getServletContext().getInitParameter("url");
+            var dbUsername = getServletContext().getInitParameter("db-username");
+            var dbPassword = getServletContext().getInitParameter("db-password");
+            Class.forName(dbClass);
+            DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {

@@ -15,4 +15,8 @@
         <param-name>root</param-name>
         <param-value>1234</param-value>
     </context-param>
+    <context-param>
+        <param-name></param-name>
+        <param-value></param-value>
+    </context-param>
 </web-app>
