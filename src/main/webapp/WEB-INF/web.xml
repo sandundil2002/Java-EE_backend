@@ -9,14 +9,14 @@
     </context-param>
     <context-param>
         <param-name>dburl</param-name>
-        <param-value>jdbc:mysql://localhost:3306/student</param-value>
+        <param-value>jdbc:mysql://localhost:3306/student_management_system</param-value>
     </context-param>
     <context-param>
-        <param-name>root</param-name>
+        <param-name>db-username</param-name>
+        <param-value>root</param-value>
+    </context-param>
+    <context-param>
+        <param-name>db-password</param-name>
         <param-value>1234</param-value>
-    </context-param>
-    <context-param>
-        <param-name></param-name>
-        <param-value></param-value>
     </context-param>
 </web-app>
