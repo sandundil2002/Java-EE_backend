@@ -84,11 +84,11 @@ public class Student extends HttpServlet {
             var rst = ps.executeQuery();
 
             while (rst.next()) {
-                studentDTO.setId(ps.executeQuery().getString("id"));
-                studentDTO.setName(ps.executeQuery().getString("name"));
-                studentDTO.setEmail(ps.executeQuery().getString("email"));
-                studentDTO.setCity(ps.executeQuery().getString("city"));
-                studentDTO.setLevel(ps.executeQuery().getString("level"));
+                studentDTO.setId(rst.getString("id"));
+                studentDTO.setName(rst.getString("name"));
+                studentDTO.setEmail(rst.getString("email"));
+                studentDTO.setCity(rst.getString("city"));
+                studentDTO.setLevel(rst.getString("level"));
             }
 
             resp.setContentType("application/json");
@@ -129,5 +129,19 @@ public class Student extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
         //Todo:delete student
+        try (var writer = resp.getWriter()) {
+            var studentId = req.getParameter("studentId");
+            var ps = connection.prepareStatement(DELETE_STUDENT);
+            ps.setString(1, studentId);
+            if (ps.executeUpdate() != 0) {
+                resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                writer.write("Student deleted successfully");
+            } else {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                writer.write("Failed to delete student");
+            }
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
