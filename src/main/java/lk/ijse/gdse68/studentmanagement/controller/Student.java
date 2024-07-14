@@ -19,6 +19,9 @@ public class Student extends HttpServlet {
     Connection connection;
     public static String SAVE_STUDENT = "INSERT INTO student (id,name,email,city,level) VALUES(?,?,?,?,?)";
     public static String GET_STUDENT = "SELECT * FROM student WHERE id=?";
+    public static String UPDATE_STUDENT = "UPDATE student SET name=?,email=?,city=?,level=? WHERE id=?";
+    public static String DELETE_STUDENT = "DELETE FROM student WHERE id=?";
+
     @Override
     public void init() {
         try {
@@ -99,6 +102,28 @@ public class Student extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
         //Todo:update student
+        try (var write = resp.getWriter()) {
+            var studentId = req.getParameter("studentId");
+            Jsonb jsonb = JsonbBuilder.create();
+            StudentDTO studentDTO = jsonb.fromJson(req.getReader(), StudentDTO.class);
+
+            var ps = connection.prepareStatement(UPDATE_STUDENT);
+
+            ps.setString(1, studentDTO.getName());
+            ps.setString(2, studentDTO.getEmail());
+            ps.setString(3, studentDTO.getCity());
+            ps.setString(4, studentDTO.getLevel());
+            ps.setString(5, studentId);
+            if (ps.executeUpdate() != 0) {
+                resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                write.write("Student updated successfully");
+            } else {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                write.write("Failed to update student");
+            }
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
