@@ -72,17 +72,25 @@ public class Student extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         //Todo:search student
         try (var writer = resp.getWriter()) {
-            var studentDTO = new StudentDTO();
+            StudentDTO studentDTO = new StudentDTO();
+            Jsonb jsonb = JsonbBuilder.create();
+
             var studentId = req.getParameter("studentId");
             var ps = connection.prepareStatement(GET_STUDENT);
             ps.setString(1, studentId);
-            while (ps.executeQuery().next()) {
-                studentDTO.setId(ps.executeQuery().getString(1));
-                studentDTO.setName(ps.executeQuery().getString(2));
-                studentDTO.setEmail(ps.executeQuery().getString(3));
-                studentDTO.setCity(ps.executeQuery().getString(4));
-                studentDTO.setLevel(ps.executeQuery().getString(5));
+            var rst = ps.executeQuery();
+
+            while (rst.next()) {
+                studentDTO.setId(ps.executeQuery().getString("id"));
+                studentDTO.setName(ps.executeQuery().getString("name"));
+                studentDTO.setEmail(ps.executeQuery().getString("email"));
+                studentDTO.setCity(ps.executeQuery().getString("city"));
+                studentDTO.setLevel(ps.executeQuery().getString("level"));
             }
+
+            resp.setContentType("application/json");
+            jsonb.toJson(studentDTO, writer);
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
