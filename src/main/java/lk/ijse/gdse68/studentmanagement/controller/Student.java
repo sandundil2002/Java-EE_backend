@@ -45,7 +45,6 @@ public class Student extends HttpServlet {
 
         try (var writer = resp.getWriter()) {
             //object binding of the json
-
             Jsonb jsonb = JsonbBuilder.create();
             StudentDTO student = jsonb.fromJson(req.getReader(), StudentDTO.class);
             student.setId(Util.idGenerate());
@@ -65,6 +64,7 @@ public class Student extends HttpServlet {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 writer.write("Failed to save student");
             }
+
         } catch (SQLException e){
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             e.printStackTrace();
@@ -114,6 +114,7 @@ public class Student extends HttpServlet {
             ps.setString(3, studentDTO.getCity());
             ps.setString(4, studentDTO.getLevel());
             ps.setString(5, studentId);
+
             if (ps.executeUpdate() != 0) {
                 resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
                 write.write("Student updated successfully");
@@ -121,6 +122,7 @@ public class Student extends HttpServlet {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 write.write("Failed to update student");
             }
+
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -133,6 +135,7 @@ public class Student extends HttpServlet {
             var studentId = req.getParameter("studentId");
             var ps = connection.prepareStatement(DELETE_STUDENT);
             ps.setString(1, studentId);
+
             if (ps.executeUpdate() != 0) {
                 resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
                 writer.write("Student deleted successfully");
@@ -140,6 +143,7 @@ public class Student extends HttpServlet {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 writer.write("Failed to delete student");
             }
+
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
         }
