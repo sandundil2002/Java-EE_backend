@@ -1,4 +1,6 @@
-<Resource name="jdbc/student_management_system" auth="Container" type="javax.sql.DataSource"
+<Context>
+    <Resource name="jdbc/student_management_system" auth="Container" type="javax.sql.DataSource"
           maxTotal="10" maxIdle="8" maxWaitMillis="-1"
-          username="root" password="1234" driverClassName="com.mysql.jdbc.Driver"
+          username="root" password="1234" driverClassName="com.mysql.cj.jdbc.Driver"
           url="jdbc:mysql://localhost:3306/student_management_system"/>
+</Context>

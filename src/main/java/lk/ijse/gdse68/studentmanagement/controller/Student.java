@@ -9,9 +9,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import lk.ijse.gdse68.studentmanagement.dto.StudentDTO;
 import lk.ijse.gdse68.studentmanagement.util.Util;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 @WebServlet(urlPatterns = "/student")
@@ -25,13 +27,10 @@ public class Student extends HttpServlet {
     @Override
     public void init() {
         try {
-            var dbClass = getServletContext().getInitParameter("db-class");
-            var dbUrl = getServletContext().getInitParameter("dburl");
-            var dbUsername = getServletContext().getInitParameter("db-username");
-            var dbPassword = getServletContext().getInitParameter("db-password");
-            Class.forName(dbClass);
-            this.connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
-        } catch (ClassNotFoundException | SQLException e) {
+            var ctx = new InitialContext();
+            DataSource pool = (DataSource) ctx.lookup("java:comp/env/jdbc/student_management_system");
+            this.connection = pool.getConnection();
+        } catch (SQLException | NamingException e) {
             e.printStackTrace();
         }
     }
