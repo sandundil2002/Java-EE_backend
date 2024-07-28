@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lk.ijse.gdse68.studentmanagement.dto.StudentDTO;
 import lk.ijse.gdse68.studentmanagement.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -15,10 +17,10 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.logging.Logger;
 
-@WebServlet(urlPatterns = "/student")
+@WebServlet(urlPatterns = "/student",loadOnStartup = +1)
 public class Student extends HttpServlet {
+    static Logger logger = LoggerFactory.getLogger(Student.class);
     Connection connection;
     public static String SAVE_STUDENT = "INSERT INTO student (id,name,email,city,level) VALUES(?,?,?,?,?)";
     public static String GET_STUDENT = "SELECT * FROM student WHERE id=?";
@@ -27,11 +29,14 @@ public class Student extends HttpServlet {
 
     @Override
     public void init() {
+        logger.info("Init method invoked");
         try {
             var ctx = new InitialContext();
             DataSource pool = (DataSource) ctx.lookup("java:comp/env/jdbc/student_management_system");
             this.connection = pool.getConnection();
+            logger.info("Connection initialized ", this.connection);
         } catch (SQLException | NamingException e) {
+            logger.info("Connection failed");
             e.printStackTrace();
         }
     }

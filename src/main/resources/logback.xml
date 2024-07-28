@@ -1,19 +1,20 @@
 <configuration>
-    <appenders name="Console" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>
-                %d{HH:mm:ss:SSS} [%t] %-5level %logger{36} - %msg%n
-            </pattern>
+            <pattern>%d{HH:mm:ss:SSS} [%t] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
-    </appenders>
+    </appender>
 
-    <appenders name="File" class="ch.qos.logback.core.FileAppender">
+    <appender name="File" class="ch.qos.logback.core.FileAppender">
         <file>D:/GDSE 68/Second Semester/AAD/StudentManagement/app.log</file>
-        <append> true </append>
+        <append>true</append>
         <encoder>
-            <pattern>
-                %d{HH:mm:ss:SSS} [%t] %-5level %logger{36} - %msg%n
-            </pattern>
+            <pattern>%d{HH:mm:ss:SSS} [%t] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
-    </appenders>
+    </appender>
+
+    <root level="debug">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="File"/>
+    </root>
 </configuration>
