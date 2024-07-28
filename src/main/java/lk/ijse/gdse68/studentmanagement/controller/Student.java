@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lk.ijse.gdse68.studentmanagement.dao.StudentDAOImpl;
 import lk.ijse.gdse68.studentmanagement.dto.StudentDTO;
 import lk.ijse.gdse68.studentmanagement.util.Util;
 import org.slf4j.Logger;
@@ -51,26 +52,13 @@ public class Student extends HttpServlet {
         try (var writer = resp.getWriter()) {
             //object binding of the json
             Jsonb jsonb = JsonbBuilder.create();
+            var studentDAOImpl = new StudentDAOImpl();
             StudentDTO student = jsonb.fromJson(req.getReader(), StudentDTO.class);
             student.setId(Util.idGenerate());
 
-            //save student
-            var ps = connection.prepareStatement(SAVE_STUDENT);
-            ps.setString(1, student.getId());
-            ps.setString(2, student.getName());
-            ps.setString(3, student.getEmail());
-            ps.setString(4, student.getCity());
-            ps.setString(5, student.getLevel());
-
-            if (ps.executeUpdate() != 0) {
-                resp.setStatus(HttpServletResponse.SC_CREATED);
-                writer.write("Student saved successfully");
-            } else {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                writer.write("Failed to save student");
-            }
-
-        } catch (SQLException e){
+            writer.write(studentDAOImpl.saveStudent(student,connection));
+            resp.setStatus(HttpServletResponse.SC_CREATED);
+        } catch (Exception e){
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             e.printStackTrace();
         }
@@ -80,27 +68,16 @@ public class Student extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         //Todo:search student
         try (var writer = resp.getWriter()) {
-            StudentDTO studentDTO = new StudentDTO();
+            var studentDAOImpl = new StudentDAOImpl();
             Jsonb jsonb = JsonbBuilder.create();
 
+            //Db process
             var studentId = req.getParameter("studentId");
-            var ps = connection.prepareStatement(GET_STUDENT);
-            ps.setString(1, studentId);
-            var rst = ps.executeQuery();
-
-            while (rst.next()) {
-                studentDTO.setId(rst.getString("id"));
-                studentDTO.setName(rst.getString("name"));
-                studentDTO.setEmail(rst.getString("email"));
-                studentDTO.setCity(rst.getString("city"));
-                studentDTO.setLevel(rst.getString("level"));
-            }
-
             resp.setContentType("application/json");
-            jsonb.toJson(studentDTO, writer);
+            jsonb.toJson(studentDAOImpl.searchStudent(studentId,connection),writer);
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
