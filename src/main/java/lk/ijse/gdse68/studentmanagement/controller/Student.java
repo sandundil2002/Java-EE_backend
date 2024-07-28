@@ -36,7 +36,7 @@ public class Student extends HttpServlet {
             this.connection = pool.getConnection();
             logger.info("Connection initialized ", this.connection);
         } catch (SQLException | NamingException e) {
-            logger.info("Connection failed");
+            logger.error("Initialize error");
             e.printStackTrace();
         }
     }
