@@ -16,6 +16,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.io.Writer;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -75,7 +76,6 @@ public class Student extends HttpServlet {
             var studentId = req.getParameter("studentId");
             resp.setContentType("application/json");
             jsonb.toJson(studentDAOImpl.searchStudent(studentId,connection),writer);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -85,27 +85,17 @@ public class Student extends HttpServlet {
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
         //Todo:update student
         try (var write = resp.getWriter()) {
+            var studentDAOImpl = new StudentDAOImpl();
             var studentId = req.getParameter("studentId");
             Jsonb jsonb = JsonbBuilder.create();
             StudentDTO studentDTO = jsonb.fromJson(req.getReader(), StudentDTO.class);
 
-            var ps = connection.prepareStatement(UPDATE_STUDENT);
-
-            ps.setString(1, studentDTO.getName());
-            ps.setString(2, studentDTO.getEmail());
-            ps.setString(3, studentDTO.getCity());
-            ps.setString(4, studentDTO.getLevel());
-            ps.setString(5, studentId);
-
-            if (ps.executeUpdate() != 0) {
+            if(studentDAOImpl.updateStudent(studentId,studentDTO,connection)){
                 resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
-                write.write("Student updated successfully");
-            } else {
+            }else {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                write.write("Failed to update student");
             }
-
-        } catch (SQLException | IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -115,19 +105,16 @@ public class Student extends HttpServlet {
         //Todo:delete student
         try (var writer = resp.getWriter()) {
             var studentId = req.getParameter("studentId");
-            var ps = connection.prepareStatement(DELETE_STUDENT);
-            ps.setString(1, studentId);
+            var studentDAOImpl = new StudentDAOImpl();
 
-            if (ps.executeUpdate() != 0) {
+            if(studentDAOImpl.deleteStudent(studentId,connection)){
                 resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
-                writer.write("Student deleted successfully");
-            } else {
+            }else {
+                writer.write("Delete failed");
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                writer.write("Failed to delete student");
             }
-
-        } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

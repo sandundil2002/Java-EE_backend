@@ -33,8 +33,20 @@ public final class StudentDAOImpl implements StudentDAO{
         return null;
     }
     @Override
-    public StudentDTO updateStudent(String id, StudentDTO student, Connection connection) {
-        return null;
+    public boolean updateStudent(String id, StudentDTO student, Connection connection) {
+        try {
+            var ps = connection.prepareStatement(UPDATE_STUDENT);
+            ps.setString(1, student.getName());
+            ps.setString(2, student.getEmail());
+            ps.setString(3, student.getCity());
+            ps.setString(4, student.getLevel());
+            ps.setString(5, id);
+            return ps.executeUpdate() != 0;
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     @Override
@@ -62,6 +74,14 @@ public final class StudentDAOImpl implements StudentDAO{
 
     @Override
     public boolean deleteStudent(String id, Connection connection) {
+        try {
+            var ps = connection.prepareStatement(DELETE_STUDENT);
+            ps.setString(1, id);
+            return ps.executeUpdate() != 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return false;
     }
 }

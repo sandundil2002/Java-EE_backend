@@ -7,7 +7,7 @@ import java.sql.Connection;
 
 public sealed interface StudentDAO permits StudentDAOImpl {
     String saveStudent(StudentDTO student, Connection connection);
-    StudentDTO updateStudent(String id, StudentDTO student, Connection connection);
+    boolean updateStudent(String id, StudentDTO student, Connection connection);
     StudentDTO searchStudent(String id, Connection connection);
     boolean deleteStudent(String id, Connection connection);
 }
