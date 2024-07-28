@@ -6,7 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lk.ijse.gdse68.studentmanagement.dao.StudentDAOImpl;
+import lk.ijse.gdse68.studentmanagement.bo.StudentBOImpl;
 import lk.ijse.gdse68.studentmanagement.dto.StudentDTO;
 import lk.ijse.gdse68.studentmanagement.util.Util;
 import org.slf4j.Logger;
@@ -16,7 +16,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.io.Writer;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -24,10 +23,6 @@ import java.sql.SQLException;
 public class Student extends HttpServlet {
     static Logger logger = LoggerFactory.getLogger(Student.class);
     Connection connection;
-    public static String SAVE_STUDENT = "INSERT INTO student (id,name,email,city,level) VALUES(?,?,?,?,?)";
-    public static String GET_STUDENT = "SELECT * FROM student WHERE id=?";
-    public static String UPDATE_STUDENT = "UPDATE student SET name=?,email=?,city=?,level=? WHERE id=?";
-    public static String DELETE_STUDENT = "DELETE FROM student WHERE id=?";
 
     @Override
     public void init() {
@@ -53,11 +48,11 @@ public class Student extends HttpServlet {
         try (var writer = resp.getWriter()) {
             //object binding of the json
             Jsonb jsonb = JsonbBuilder.create();
-            var studentDAOImpl = new StudentDAOImpl();
+            var studentBOImpl = new StudentBOImpl();
             StudentDTO student = jsonb.fromJson(req.getReader(), StudentDTO.class);
             student.setId(Util.idGenerate());
 
-            writer.write(studentDAOImpl.saveStudent(student,connection));
+            writer.write(studentBOImpl.saveStudent(student,connection));
             resp.setStatus(HttpServletResponse.SC_CREATED);
         } catch (Exception e){
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -69,13 +64,13 @@ public class Student extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         //Todo:search student
         try (var writer = resp.getWriter()) {
-            var studentDAOImpl = new StudentDAOImpl();
+            var studentBOImpl = new StudentBOImpl();
             Jsonb jsonb = JsonbBuilder.create();
 
             //Db process
             var studentId = req.getParameter("studentId");
             resp.setContentType("application/json");
-            jsonb.toJson(studentDAOImpl.searchStudent(studentId,connection),writer);
+            jsonb.toJson(studentBOImpl.searchStudent(studentId,connection),writer);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -85,12 +80,12 @@ public class Student extends HttpServlet {
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
         //Todo:update student
         try (var write = resp.getWriter()) {
-            var studentDAOImpl = new StudentDAOImpl();
+            var studentBOImpl = new StudentBOImpl();
             var studentId = req.getParameter("studentId");
             Jsonb jsonb = JsonbBuilder.create();
             StudentDTO studentDTO = jsonb.fromJson(req.getReader(), StudentDTO.class);
 
-            if(studentDAOImpl.updateStudent(studentId,studentDTO,connection)){
+            if(studentBOImpl.updateStudent(studentId,studentDTO,connection)){
                 resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }else {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -105,9 +100,9 @@ public class Student extends HttpServlet {
         //Todo:delete student
         try (var writer = resp.getWriter()) {
             var studentId = req.getParameter("studentId");
-            var studentDAOImpl = new StudentDAOImpl();
+            var studentBOImpl = new StudentBOImpl();
 
-            if(studentDAOImpl.deleteStudent(studentId,connection)){
+            if(studentBOImpl.deleteStudent(studentId,connection)){
                 resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }else {
                 writer.write("Delete failed");
